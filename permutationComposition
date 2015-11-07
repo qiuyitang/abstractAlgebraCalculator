@@ -1,0 +1,100 @@
+def loadPermutation(str,alphabet):
+	if str[0]!='(' and str[-1]!=')':
+		print "invalid input"
+		return None
+	permutation = {}
+	for item in alphabet:
+		permutation[item] = item
+	cycle = len(str)-2
+	for i in range (1,cycle):
+		if (str[i] not in alphabet) or (str[i+1] not in alphabet):
+			print "invalid input"
+			return None
+		permutation[str[i]] = str[i+1]
+	permutation[str[cycle]] = str[1]
+	return permutation
+	
+def compositionPermutation(p1,p2,alphabet):
+	ret = {}
+	for cha in alphabet:
+		key = p2[cha]
+		ret[cha] = p1[key]
+	return ret
+	
+def cycleRepresentation(p,alphabet):
+	ret = []
+	l = list(alphabet)
+	item = l[0]
+	index = 0
+	distinctCycle = [0]
+	while len(l)>0:
+		#print len(l)
+		if p[item] == item:
+			l.remove(item)
+			if len(l) == 0:
+				break
+			else:
+				item = l[0]
+		elif p[item] != item:
+			if len(ret) == 0:
+				ret.append(item)
+				l.remove(item)
+				ret.append(p[item])
+				l.remove(p[item])
+				item = p[item]
+			else:
+				if p[item] not in ret:
+					ret.append(p[item])
+					l.remove(p[item])
+					item = p[item]
+				else:
+					item = l[0]
+					distinctCycle.append(len(ret))
+	retstr = ""
+	if len(ret)==0:
+		return retstr
+	for i in range (len(ret)):
+		if i == 0:
+			retstr += "("
+		elif i in distinctCycle:
+			retstr += ")("
+		retstr += ret[i]
+	retstr += ")"
+	return retstr
+	
+def test1():
+	print "Input the alphabet (separate each element with a space):"
+	alphabet = raw_input().split()
+	print "Input the first permutation:"
+	p1 = raw_input()
+	print "Input the second permutation:"
+	p2 = raw_input()
+	perm1 = loadPermutation(p1,alphabet)
+	perm2 = loadPermutation(p2,alphabet)
+	ret = compositionPermutation(perm1,perm2,alphabet)
+	#print ret
+	print cycleRepresentation(ret,alphabet)
+
+def main():
+	alphabet = raw_input().split()
+	group1 = raw_input().split()
+	group2 = raw_input().split()
+	compose12 = []
+	compose21 = []
+	for i in group1:
+		for j in group2:
+			p1 = loadPermutation(i,alphabet)
+			p2 = loadPermutation(j,alphabet)
+			permu12 = compositionPermutation(p1,p2,alphabet)
+			compose12.append(cycleRepresentation(permu12,alphabet))
+			permu21 = compositionPermutation(p2,p1,alphabet)
+			compose21.append(cycleRepresentation(permu21,alphabet))
+	print compose21
+	print compose12
+	for item in compose12:
+		if item not in compose21:
+			print item
+			return
+	print "Normal"
+	
+main()
