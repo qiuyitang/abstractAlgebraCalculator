@@ -93,8 +93,8 @@ def main():
 	print compose12
 	for item in compose12:
 		if item not in compose21:
-			print item
+			print "Permutation 1 is not normal to Permutation 2"
 			return
-	print "Normal"
+	print "Permutation 1 is normal to Permutation 2"
 	
 main()
